@@ -7,12 +7,42 @@ on:
       - test
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
+  build_wheels_on_ubuntu:
+    name: Build wheels on ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.8'
+
+      - run: |
+          apt-get install -y libopenblas-dev 
+
+      - name: Install cibuildwheel
+        run: |
+          python -m pip install cibuildwheel==1.6.3
+
+      - name: Build wheels
+        run: |
+          python -m cibuildwheel --output-dir wheelhouse
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          files: |
+            wheelhouse/*.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_wheels_on_macos:
+    name: Build wheels on macos
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
