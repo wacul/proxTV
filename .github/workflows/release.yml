@@ -21,7 +21,7 @@ jobs:
 
       - run: |
           docker pull quay.io/pypa/manylinux1_x86_64
-          docker run --rm -it -v $(pwd):/io quay.io/pypa/manylinux1_x86_64 bash -c "cd /io; bash buildwheels.sh 38 "
+          docker run --rm -t -v $(pwd):/io quay.io/pypa/manylinux1_x86_64 bash -c "cd /io; bash buildwheels.sh 38 "
           mkdir dist
           cp wheelhouse/prox_tv-*-cp38-cp38-manylinux1_x86_64.whl dist
           pip install wheelhouse/prox_tv-*-cp38-cp38-manylinux1_x86_64.whl
@@ -50,6 +50,7 @@ jobs:
           python-version: '3.8'
 
       - run: |
+          pip install wheel
           pip wheel . -w wheelhouse/
           pip install delocate
           delocate-listdeps wheelhouse/*.whl
