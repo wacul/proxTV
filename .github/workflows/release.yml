@@ -32,7 +32,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          draft: true
           files: |
             wheelhouse/prox_tv-*-cp38-cp38-manylinux1_x86_64.whl
         env:
@@ -65,7 +64,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          draft: true
           files: |
             wheelhouse/prox_tv-*-cp38-cp38-macosx_*.whl
         env:
