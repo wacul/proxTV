@@ -37,6 +37,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  build_aarch64_wheels_on_ubuntu:
+    name: Build aarch64 wheels on ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.8'
+
+      - name: Build
+        run: |
+          docker pull quay.io/pypa/manylinux2014_aarch64
+          docker run --rm -t -v $(pwd):/io quay.io/pypa/manylinux2014_aarch64 bash -c "cd /io; bash buildwheels.sh 38 "
+          mkdir dist
+          cp wheelhouse/prox_tv-*-cp38-cp38-linux_aarch64.whl dist
+          ls -la wheelhouse
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            wheelhouse/prox_tv-*-cp38-cp38-linux_aarch64.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build_wheels_on_macos:
     name: Build wheels on macos
     runs-on: macos-latest
